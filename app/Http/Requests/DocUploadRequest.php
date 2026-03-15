@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\AUthRequests;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class DocUploadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['string', 'email', 'required', 'max:255'],
-            'password' => ['string', 'required', 'max:255']
+            'document' => ['required', 'mimes:pdf,docx,csv,txt,doc', 'file', 'max:20480']
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ class AuthService
 {
 
 
-    public function Register($data)
+    public function registerService($data)
     {
         $createdUser = User::create([
             'name' => $data['name'],
@@ -29,10 +30,39 @@ class AuthService
 
         return [
             'user' => $createdUser,
-            'accessToken' => $accessToken,
+            'access_token' => $accessToken,
             'refresh_token' => $refresh_token
         ];
     }
+
+
+    public function loginService($data)
+    {
+        $user = User::where('email', $data['email'])->firstOrFail();
+        if (!Hash::check($data['password'], $user->password)) {
+            throw new AuthorizationException('wrong credentials');
+        }
+        $accessToken = Auth::login($user);
+        $refreshToken = $this->generateRefreshToken($user);
+        return [
+            'user' => $user,
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken
+        ];
+    }
+    public function logout()
+    {
+        $user = Auth::user();
+        RefreshToken::where('user_id', $user->id)->delete();
+        Auth::logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'logged out successfully'
+        ], 200);
+    }
+
+
+
     public function generateRefreshToken(User $user)
     {
         RefreshToken::where('user_id', $user->id)->delete();
@@ -63,9 +93,8 @@ class AuthService
 
         return [
             'user' => $checked->user,
-            'newAccessToken' => $newAccessToken,
-            'newRefreshToken' => $newRefreshToken ?? $plainToken
+            'access_Token' => $newAccessToken,
+            'refresh_token' => $newRefreshToken ?? $plainToken
         ];
     }
-    
 }

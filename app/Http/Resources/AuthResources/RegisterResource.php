@@ -19,8 +19,8 @@ class RegisterResource extends JsonResource
             'data' => [
                 'name' => $this->resource['user']->name,
                 'email' => $this->resource['user']->email,
-                'accessToken' => $this->resource['newAccessToken'],
-                'refresh_token' => $this->resource['newRefresh_token']
+                'accessToken' => $this->resource['access_token'],
+                'refresh_token' => $this->resource['refresh_token']
             ]
         ];
     }
