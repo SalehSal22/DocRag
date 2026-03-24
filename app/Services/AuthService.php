@@ -38,7 +38,7 @@ class AuthService
 
     public function loginService($data)
     {
-        $user = User::where('email', $data['email'])->firstOrFail();
+        $user = User::where('email', $data['email'])->first();
         if (!Hash::check($data['password'], $user->password)) {
             throw new AuthorizationException('wrong credentials');
         }
@@ -81,7 +81,10 @@ class AuthService
     public function refreshAccessToken(string $plainToken)
     {
         $hashed = hash('sha256', $plainToken);
-        $checked = RefreshToken::where('refresh_token', $hashed)->firstOrFail();
+        $checked = RefreshToken::where('refresh_token', $hashed)->first();
+        if (!$checked) {
+            throw new \Illuminate\Auth\AuthenticationException('Unauthenticated');
+        }
         if ($checked->expires_at->isPast()) {
             $checked->delete();
             throw new Exception('Refresh token expired');
@@ -93,7 +96,7 @@ class AuthService
 
         return [
             'user' => $checked->user,
-            'access_Token' => $newAccessToken,
+            'access_token' => $newAccessToken,
             'refresh_token' => $newRefreshToken ?? $plainToken
         ];
     }

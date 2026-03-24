@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Paper;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,11 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('papers', function (Blueprint $table) {
+        Schema::create('embedings', function (Blueprint $table) {
             $table->id();
-            $table->string('document');
-            $table->enum('status',['uploaded','pending','failed','processing','ready'])->default('uploaded');
-            $table->text('raw_text')->nullable();
+            $table->foreignIdFor(Paper::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('embedding');
+            $table->string('origin');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('papers');
+        Schema::dropIfExists('embedings');
     }
 };
