@@ -11,7 +11,7 @@ class PromptRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class PromptRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'doc_id'=>['required','int'],
+            'prompt'=>['required','string']
         ];
     }
 }

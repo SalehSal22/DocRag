@@ -39,21 +39,19 @@ class EmbedingChunksJob implements ShouldQueue
 
         foreach ($chunks as $chunk) {
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.openai.key')
-            ])->post('https://api.openai.com/v1/embeddings', [
-                'model' => 'text-embedding-3-small',
+            $response = Http::post('http://localhost:11434/api/embed', [
+                'model' => 'qwen3-embedding:4b',
                 'input' => $chunk
             ]);
             if ($response->failed()) {
-                throw new \Exception('open ai failed :' . $response->status());
+                throw new \Exception($response->json('error')?? 'unknown error');
             }
 
             $embedding = $response->json();
 
             Embeding::create([
                 'paper_id' => $this->docId,
-                'embedding' => $embedding['data'][0]['embedding'],
+                'embedding' => $embedding['embeddings'][0],
                 'origin' => $chunk
             ]);
         }
@@ -82,10 +80,9 @@ class EmbedingChunksJob implements ShouldQueue
         }
 
         $v2 = array_values(array_filter($v2, fn($c) => strlen(trim($c)) > 50));
-       
+
         for ($i = 1; $i < count($v2); $i++) {
             $v2[$i] = substr($v2[$i - 1], -150) . $v2[$i];
-            
         }
 
         return $v2;

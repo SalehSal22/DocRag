@@ -22,7 +22,7 @@ class DocUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'document' => ['required', 'mimes:pdf,docx,csv,txt,doc', 'file', 'max:20480']
+            'document' => ['required', 'mimes:csv,txt,pdf,docx,doc', 'file', 'max:20480']
         ];
     }
 }

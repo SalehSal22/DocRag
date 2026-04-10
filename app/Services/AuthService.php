@@ -39,6 +39,9 @@ class AuthService
     public function loginService($data)
     {
         $user = User::where('email', $data['email'])->first();
+        if (!$user) {
+            throw new AuthorizationException('wrong credentials');
+        }
         if (!Hash::check($data['password'], $user->password)) {
             throw new AuthorizationException('wrong credentials');
         }

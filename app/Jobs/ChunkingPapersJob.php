@@ -31,6 +31,9 @@ class ChunkingPapersJob implements ShouldQueue
     public function handle(): void
     {
         $doc = Storage::get($this->path);
+
+
+
         Paper::findOrFail($this->docCreatedId)->update([
             'status' => 'processing',
             'raw_text' => $doc

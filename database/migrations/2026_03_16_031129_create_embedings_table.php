@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('embedings', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Paper::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('embedding');
-            $table->string('origin');
+            $table->longText('embedding');
+            $table->longText('origin');
             $table->timestamps();
         });
     }
